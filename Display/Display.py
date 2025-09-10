@@ -1,0 +1,113 @@
+# Display/Display.py
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QGraphicsDropShadowEffect
+from PySide6.QtGui import QColor, QPalette, QFontDatabase, QFont
+from PySide6.QtCore import Qt
+
+# Importa todas as nossas classes
+from data.DataAggregator import DataAggregator
+from Display.Grid.Layouts import DashboardLayout
+from Display.Elements.Rpm import RpmIndicator, DigitalRpm
+from Display.Elements.Speed import SpeedWidget
+from Display.Elements.SOC import SocBar
+from Display.Elements.Temps import VerticalBarGauge
+from Display.Elements.PedalPressure import PedalPressureWidget
+
+class MainDisplay(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Dashboard F-Elétrico")
+        self.setGeometry(50, 50, 1366, 768)
+
+        # Paleta de Cores
+        self.COLOR_BACKGROUND = QColor("#101010")
+        self.COLOR_RPM_GREEN = QColor("#39FF14")
+        self.COLOR_RPM_BLUE = QColor("#00BFFF")
+        self.COLOR_ACCELERATOR = self.COLOR_RPM_GREEN
+        self.COLOR_BRAKE = QColor("#FF073A")
+        self.COLOR_BATT_TEMP = QColor("#FFA500")
+        self.COLOR_MOTOR_TEMP = QColor("#FF4500")
+        self.COLOR_TEXT_PRIMARY = QColor("#FFFFFF")
+        self.COLOR_TEXT_SECONDARY = QColor("#AAAAAA")
+        
+        palette = self.palette()
+        palette.setColor(QPalette.Window, self.COLOR_BACKGROUND)
+        self.setPalette(palette)
+        self.setAutoFillBackground(True)
+
+        # Carregamento da Fonte
+        font_id = QFontDatabase.addApplicationFont("Display/assets/fonts/Orbitron-Bold.ttf")
+        if font_id != -1:
+            self.font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        else:
+            print("AVISO: Fonte 'Orbitron-Bold.ttf' não encontrada.")
+            self.font_family = "Consolas"
+
+        self.data_aggregator = DataAggregator()
+
+        # Criar os widgets da UI, passando a fonte
+        self.rpm_indicator = RpmIndicator()
+        self.digital_rpm = DigitalRpm(self.font_family)
+        self.speed_widget = SpeedWidget(self.font_family)
+        self.soc_bar = SocBar()
+        self.battery_temp_gauge = VerticalBarGauge(self.COLOR_BATT_TEMP, 20, 70)
+        self.engine_temp_gauge = VerticalBarGauge(self.COLOR_MOTOR_TEMP, 60, 120)
+        self.pedal_widget = PedalPressureWidget()
+        
+        # Aplicando Cores e Efeitos
+        self.rpm_indicator.green_color = self.COLOR_RPM_GREEN
+        self.rpm_indicator.blue_color = self.COLOR_RPM_BLUE
+        self.pedal_widget.accelerator_bar.color = self.COLOR_ACCELERATOR
+        self.pedal_widget.brake_bar.color = self.COLOR_BRAKE
+        
+        glow_effect = lambda color, radius=25: QGraphicsDropShadowEffect(blurRadius=radius, color=color, offset=0)
+        self.speed_widget.setGraphicsEffect(glow_effect(self.COLOR_BATT_TEMP))
+        self.digital_rpm.setGraphicsEffect(glow_effect(self.COLOR_TEXT_PRIMARY, radius=20))
+
+        # Conectar sinais aos slots
+        self.data_aggregator.new_rpm_value.connect(self.rpm_indicator.setRpm)
+        self.data_aggregator.new_rpm_value.connect(self.digital_rpm.setValue)
+        self.data_aggregator.new_speed_value.connect(self.speed_widget.setValue)
+        self.data_aggregator.new_soc_value.connect(self.soc_bar.setValue)
+        self.data_aggregator.new_battery_temp_value.connect(self.battery_temp_gauge.setValue)
+        self.data_aggregator.new_engine_temp_value.connect(self.engine_temp_gauge.setValue)
+        self.data_aggregator.new_pedal_pressure_values.connect(self.pedal_widget.update_pressures)
+        
+        # Configurar o Layout
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout_manager = DashboardLayout(central_widget, self.font_family)
+        
+        temp_container = QWidget()
+        temp_layout = QHBoxLayout(temp_container)
+        temp_layout.setSpacing(10)
+        temp_layout.setContentsMargins(0,0,0,0)
+        temp_layout.addWidget(self.battery_temp_gauge)
+        temp_layout.addWidget(self.engine_temp_gauge)
+
+        # Adicionar widgets principais ao layout
+        layout_manager.add_element(self.rpm_indicator, 0, 0, 1, 5)
+        layout_manager.add_element(self.digital_rpm, 1, 1, 1, 1, Qt.AlignCenter)
+        layout_manager.add_element(self.speed_widget, 2, 1, 1, 1, Qt.AlignCenter)
+        layout_manager.add_element(temp_container, 2, 2, 1, 1, Qt.AlignCenter)
+        layout_manager.add_element(self.pedal_widget, 2, 3, 1, 1, Qt.AlignCenter)
+        layout_manager.add_element(self.soc_bar, 4, 0, 1, 5, Qt.AlignVCenter)
+        
+        # Adicionar Labels Estáticos
+        layout_manager.create_and_add_label("Indicador do RPM", 0, 4, self.COLOR_TEXT_SECONDARY, alignment=Qt.AlignRight | Qt.AlignBottom)
+        layout_manager.create_and_add_label("Velocímetro", 2, 0, self.COLOR_TEXT_SECONDARY, alignment=Qt.AlignRight | Qt.AlignVCenter)
+        layout_manager.create_and_add_label("Temp. Bateria | Motor", 1, 2, self.COLOR_TEXT_SECONDARY, alignment=Qt.AlignHCenter | Qt.AlignBottom)
+        layout_manager.create_and_add_label("Acelerador | Freio", 1, 3, self.COLOR_TEXT_SECONDARY, alignment=Qt.AlignHCenter | Qt.AlignBottom)
+        layout_manager.create_and_add_label("State of Charge", 5, 0, self.COLOR_TEXT_SECONDARY, col_span=5, alignment=Qt.AlignHCenter | Qt.AlignTop)
+
+        self.data_aggregator.start_all_simulators()
+        
+    def closeEvent(self, event):
+        self.data_aggregator.stop_all_simulators()
+        event.accept()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainDisplay()
+    window.show()
+    sys.exit(app.exec())
