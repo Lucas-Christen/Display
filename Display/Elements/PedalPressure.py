@@ -9,8 +9,11 @@ class PedalPressureWidget(QWidget):
         layout = QHBoxLayout(self)
         layout.setSpacing(8)
         layout.setContentsMargins(0,0,0,0)
-        self.accelerator_bar = VerticalBarGauge(color="#00FF00", vmin=0, vmax=100)
-        self.brake_bar = VerticalBarGauge(color="#FF0000", vmin=0, vmax=100)
+        
+        # Corrigido: usar a nova assinatura da VerticalBarGauge
+        self.accelerator_bar = VerticalBarGauge("#00FF00", 0, 100, "accelerator")
+        self.brake_bar = VerticalBarGauge("#FF0000", 0, 100, "brake")
+        
         layout.addWidget(self.accelerator_bar)
         layout.addWidget(self.brake_bar)
 

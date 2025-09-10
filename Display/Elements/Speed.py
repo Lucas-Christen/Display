@@ -6,6 +6,8 @@ from PySide6.QtCore import Qt, Slot
 class SpeedWidget(QWidget):
     def __init__(self, font_family, parent=None):
         super().__init__(parent)
+        self.setFixedSize(180, 120)  # Tamanho fixo para velocímetro
+        
         self.setStyleSheet("""
             QWidget {
                 background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, 
@@ -19,8 +21,9 @@ class SpeedWidget(QWidget):
         self.value_label = QLabel("0")
         self.unit_label = QLabel("KM/H")
         
-        self.value_label.setFont(QFont(font_family, 90, QFont.Bold))
-        self.unit_label.setFont(QFont(font_family, 30))
+        # Fonte ajustada para até 3 dígitos
+        self.value_label.setFont(QFont(font_family, 48, QFont.Bold))
+        self.unit_label.setFont(QFont(font_family, 16))
         self.value_label.setStyleSheet("color: #FFFFFF; background: transparent; border: none;")
         self.unit_label.setStyleSheet("color: #AAAAAA; background: transparent; border: none;")
         self.value_label.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
@@ -28,7 +31,7 @@ class SpeedWidget(QWidget):
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(-15)
+        layout.setSpacing(-8)
         layout.addWidget(self.value_label)
         layout.addWidget(self.unit_label)
         
