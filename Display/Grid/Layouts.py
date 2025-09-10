@@ -7,25 +7,25 @@ class DashboardLayout:
     def __init__(self, parent_widget, font_family):
         self.layout = QGridLayout(parent_widget)
         self.font_family = font_family
-        self.layout.setSpacing(15)
-        self.layout.setContentsMargins(25, 20, 25, 20)
+        self.layout.setSpacing(20)  # Mais espaçamento
+        self.layout.setContentsMargins(30, 25, 30, 25)
 
-        # Define a proporção das colunas e linhas para o novo layout
-        # 6 colunas: Tyre Display | Lap Times | Velocímetro (2 cols) | Temps | Pedals | Fail Alerts  
-        self.layout.setColumnStretch(0, 2)  # Tyre Display
-        self.layout.setColumnStretch(1, 3)  # Lap Times  
-        self.layout.setColumnStretch(2, 3)  # Velocímetro (parte 1)
-        self.layout.setColumnStretch(3, 3)  # Velocímetro (parte 2)
-        self.layout.setColumnStretch(4, 2)  # Temperaturas
-        self.layout.setColumnStretch(5, 2)  # Pedais
+        # Layout baseado na imagem de referência
+        # 6 colunas organizadas para o layout correto
+        self.layout.setColumnStretch(0, 2)  # Tyre Display (esquerda)
+        self.layout.setColumnStretch(1, 3)  # Lap Times 
+        self.layout.setColumnStretch(2, 4)  # Velocímetro (centro)
+        self.layout.setColumnStretch(3, 4)  # Velocímetro (continuação)
+        self.layout.setColumnStretch(4, 2)  # Temperaturas + Pedais
+        self.layout.setColumnStretch(5, 1)  # Espaço extra
         
-        # 6 linhas: RPM | RPM Digital | Widgets principais | Continuação | Fail Alerts | SOC
-        self.layout.setRowStretch(0, 1)  # RPM Leds
+        # 6 linhas organizadas
+        self.layout.setRowStretch(0, 1)  # RPM LEDs (topo)
         self.layout.setRowStretch(1, 1)  # RPM Digital
-        self.layout.setRowStretch(2, 4)  # Widgets principais (linha 1)
-        self.layout.setRowStretch(3, 4)  # Widgets principais (linha 2)
-        self.layout.setRowStretch(4, 2)  # Fail Alerts
-        self.layout.setRowStretch(5, 1)  # SOC Bar
+        self.layout.setRowStretch(2, 3)  # Widgets principais linha 1
+        self.layout.setRowStretch(3, 3)  # Widgets principais linha 2
+        self.layout.setRowStretch(4, 2)  # Sistemas (inferior esquerda)
+        self.layout.setRowStretch(5, 1)  # SOC (inferior)
 
     def add_element(self, widget, row, col, row_span=1, col_span=1, alignment=Qt.AlignmentFlag.AlignCenter):
         """Adiciona um widget ao grid com spans e alinhamento."""

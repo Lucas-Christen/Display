@@ -25,8 +25,8 @@ class MainDisplay(QMainWindow):
         # Paleta de Cores
         self.COLOR_BACKGROUND = QColor("#101010")
         self.COLOR_RPM_GREEN = QColor("#39FF14")
-        self.COLOR_RPM_YELLOW = QColor("#FFD700")
-        self.COLOR_RPM_RED = QColor("#FF073A")
+        self.COLOR_RPM_ORANGE = QColor("#FF8C00")
+        self.COLOR_RPM_BLUE = QColor("#1E90FF")
         self.COLOR_ACCELERATOR = self.COLOR_RPM_GREEN
         self.COLOR_BRAKE = QColor("#FF073A")
         self.COLOR_BATT_TEMP = QColor("#FFA500")
@@ -63,14 +63,12 @@ class MainDisplay(QMainWindow):
         
         # Aplicando Cores e Efeitos
         self.rpm_indicator.green_color = self.COLOR_RPM_GREEN
-        self.rpm_indicator.yellow_color = self.COLOR_RPM_YELLOW
-        self.rpm_indicator.red_color = self.COLOR_RPM_RED
-        self.pedal_widget.accelerator_bar.color = self.COLOR_ACCELERATOR
-        self.pedal_widget.brake_bar.color = self.COLOR_BRAKE
+        self.rpm_indicator.orange_color = self.COLOR_RPM_ORANGE
+        self.rpm_indicator.blue_color = self.COLOR_RPM_BLUE
         
         glow_effect = lambda color, radius=25: QGraphicsDropShadowEffect(blurRadius=radius, color=color, offset=0)
-        self.speed_widget.setGraphicsEffect(glow_effect(self.COLOR_BATT_TEMP))
-        self.digital_rpm.setGraphicsEffect(glow_effect(self.COLOR_TEXT_PRIMARY, radius=20))
+        self.speed_widget.setGraphicsEffect(glow_effect(QColor("#00BFFF")))
+        self.digital_rpm.setGraphicsEffect(glow_effect(QColor("#FFD700"), radius=20))
 
         # Conectar sinais aos slots
         self.data_aggregator.new_rpm_value.connect(self.rpm_indicator.setRpm)
@@ -95,24 +93,25 @@ class MainDisplay(QMainWindow):
         temp_layout.addWidget(self.battery_temp_gauge)
         temp_layout.addWidget(self.engine_temp_gauge)
 
-        # Layout principal - 6 colunas x 6 linhas
-        # Linha 0: RPM Indicator (ocupa toda a largura)
+        # Layout principal baseado nas imagens
+        # Linha 0: RPM Indicator (toda a largura superior)
         layout_manager.add_element(self.rpm_indicator, 0, 0, 1, 6)
         
-        # Linha 1: RPM Digital (centro)
+        # Linha 1: RPM Digital (centro superior)
         layout_manager.add_element(self.digital_rpm, 1, 2, 1, 2, Qt.AlignCenter)
         
-        # Linha 2: Tyre Display | Lap Times | Velocímetro | Temperaturas | Pedais | Fail Alerts
+        # Linha 2-3: Layout principal
+        # Tyre Display | Lap Times | Velocímetro | Temperaturas | Pedais
         layout_manager.add_element(self.tyre_display_widget, 2, 0, 2, 1, Qt.AlignCenter)
         layout_manager.add_element(self.lap_times_widget, 2, 1, 2, 1, Qt.AlignCenter)
         layout_manager.add_element(self.speed_widget, 2, 2, 2, 2, Qt.AlignCenter)
-        layout_manager.add_element(temp_container, 2, 4, 2, 1, Qt.AlignCenter)
-        layout_manager.add_element(self.pedal_widget, 2, 5, 2, 1, Qt.AlignCenter)
+        layout_manager.add_element(temp_container, 2, 4, 1, 1, Qt.AlignCenter)
+        layout_manager.add_element(self.pedal_widget, 3, 4, 1, 1, Qt.AlignCenter)
         
         # Linha 4: Fail Alerts (esquerda inferior)
-        layout_manager.add_element(self.fail_alerts_widget, 4, 0, 2, 1, Qt.AlignCenter)
+        layout_manager.add_element(self.fail_alerts_widget, 4, 0, 1, 1, Qt.AlignCenter)
         
-        # Linha 5: SOC Bar (ocupa largura central)
+        # Linha 5: SOC Bar (largura central)
         layout_manager.add_element(self.soc_bar, 5, 1, 1, 4, Qt.AlignVCenter)
 
         self.data_aggregator.start_all_simulators()
