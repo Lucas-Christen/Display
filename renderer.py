@@ -494,10 +494,10 @@ def draw_tyres(surface, data, pos):
     # (1) POSIÇÃO DAS RODAS ------------- EDITAR AQUI --------------------------
     # Coordenadas normalizadas (u,v): 0..1 na largura/altura do PNG
     wheel_uv = {
-        "FL": (0.12, 0.24),  # Front-Left
-        "FR": (0.88, 0.24),  # Front-Right
-        "RL": (0.12, 0.90),  # Rear-Left
-        "RR": (0.88, 0.90),  # Rear-Right
+        "FL": (0.12, 0.22),  # Front-Left
+        "FR": (0.88, 0.22),  # Front-Right
+        "RL": (0.11, 0.92),  # Rear-Left
+        "RR": (0.89, 0.92),  # Rear-Right
     }
     # Dica: mude apenas os números; x mais perto de 0 vai para esquerda, de 1 para direita.
     #       y mais perto de 0 sobe; mais perto de 1 desce.
