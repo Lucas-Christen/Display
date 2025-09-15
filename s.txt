@@ -1,0 +1,105 @@
+def draw_soc(surface, data, pos):
+    rect = pygame.Rect(pos, (515, 102))
+    soc_rect = pygame.Rect(rect.left, rect.centery, rect.width, 40)
+    
+    # --- CORREÇÃO: Posição do Texto kW/h ---
+    # O texto do delta de energia é posicionado relativamente à barra de SOC, não à barra de RPM
+    soc_text_surf = FONTS["large"].render("SOC", True, COLORS["white"])
+    delta_color = COLORS["pedal_green"] if data.power_delta >= 0 else COLORS["pedal_red"]
+    delta_sign = "+" if data.power_delta >= 0 else ""
+    delta_text_surf = FONTS["medium"].render(f"{delta_sign}{data.power_delta:.1f}kW/h", True, delta_color)
+    surface.blit(soc_text_surf, soc_text_surf.get_rect(midbottom=soc_rect.midtop, right=soc_rect.left + 200))
+    surface.blit(delta_text_surf, delta_text_surf.get_rect(midleft=(soc_rect.left + 220, soc_text_surf.get_rect().centery)))
+    
+    for i in range(int(soc_rect.width * data.soc)):
+        ratio = i / soc_rect.width
+        color = ( int((1 - ratio) * COLORS["soc_red"][0] + ratio * COLORS["soc_green"][0]),
+                  int((1 - ratio) * COLORS["soc_red"][1] + ratio * COLORS["soc_green"][1]),
+                  int((1 - ratio) * COLORS["soc_red"][2] + ratio * COLORS["soc_green"][2]) )
+        pygame.draw.line(surface, color, (soc_rect.left + i, soc_rect.top), (soc_rect.left + i, soc_rect.bottom))
+    pygame.draw.rect(surface, COLORS["grey"], soc_rect, width=2, border_radius=15)
+
+<svg width="916" height="26" viewBox="0 0 916 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="16.6081" cy="13" rx="16.6081" ry="13" fill="#1466FF"/>
+<ellipse cx="155.861" cy="13" rx="16.6081" ry="13" fill="#1466FF"/>
+<ellipse cx="109.23" cy="13" rx="15.9693" ry="13" fill="#1466FF"/>
+<ellipse cx="62.5997" cy="13" rx="16.6081" ry="13" fill="#1466FF"/>
+<ellipse cx="201.852" cy="13" rx="16.6081" ry="13" fill="#1466FF"/>
+<ellipse cx="341.105" cy="13" rx="16.6081" ry="13" fill="url(#paint0_linear_1_57)"/>
+<ellipse cx="295.113" cy="13" rx="16.6081" ry="13" fill="url(#paint1_linear_1_57)"/>
+<ellipse cx="248.483" cy="13" rx="15.9693" ry="13" fill="url(#paint2_linear_1_57)"/>
+<ellipse cx="388.374" cy="13" rx="16.6081" ry="13" fill="url(#paint3_linear_1_57)"/>
+<ellipse cx="527.626" cy="13" rx="16.6081" ry="13" fill="url(#paint4_linear_1_57)"/>
+<ellipse cx="480.996" cy="13" rx="15.9693" ry="13" fill="url(#paint5_linear_1_57)"/>
+<ellipse cx="434.365" cy="13" rx="16.6081" ry="13" fill="url(#paint6_linear_1_57)"/>
+<ellipse cx="573.618" cy="13" rx="16.6081" ry="13" fill="url(#paint7_linear_1_57)"/>
+<ellipse cx="712.87" cy="13" rx="16.6081" ry="13" fill="url(#paint8_linear_1_57)"/>
+<ellipse cx="666.879" cy="13" rx="16.6081" ry="13" fill="url(#paint9_linear_1_57)"/>
+<ellipse cx="620.248" cy="13" rx="15.9693" ry="13" fill="url(#paint10_linear_1_57)"/>
+<ellipse cx="760.139" cy="13" rx="16.6081" ry="13" fill="url(#paint11_linear_1_57)"/>
+<ellipse cx="899.392" cy="13" rx="16.6081" ry="13" fill="url(#paint12_linear_1_57)"/>
+<ellipse cx="853.4" cy="13" rx="16.6081" ry="13" fill="url(#paint13_linear_1_57)"/>
+<ellipse cx="806.77" cy="13" rx="15.9693" ry="13" fill="url(#paint14_linear_1_57)"/>
+<defs>
+<linearGradient id="paint0_linear_1_57" x1="341.105" y1="0" x2="341.105" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78FF5E"/>
+<stop offset="1" stop-color="#1B8107"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1_57" x1="295.113" y1="0" x2="295.113" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78FF5E"/>
+<stop offset="1" stop-color="#1B8107"/>
+</linearGradient>
+<linearGradient id="paint2_linear_1_57" x1="248.483" y1="0" x2="248.483" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78FF5E"/>
+<stop offset="1" stop-color="#1B8107"/>
+</linearGradient>
+<linearGradient id="paint3_linear_1_57" x1="388.374" y1="0" x2="388.374" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78FF5E"/>
+<stop offset="1" stop-color="#1B8107"/>
+</linearGradient>
+<linearGradient id="paint4_linear_1_57" x1="527.626" y1="0" x2="527.626" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDE2C"/>
+<stop offset="1" stop-color="#705E01"/>
+</linearGradient>
+<linearGradient id="paint5_linear_1_57" x1="480.996" y1="0" x2="480.996" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDE2C"/>
+<stop offset="1" stop-color="#705E01"/>
+</linearGradient>
+<linearGradient id="paint6_linear_1_57" x1="434.365" y1="0" x2="434.365" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78FF5E"/>
+<stop offset="1" stop-color="#1B8107"/>
+</linearGradient>
+<linearGradient id="paint7_linear_1_57" x1="573.618" y1="0" x2="573.618" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDE2C"/>
+<stop offset="1" stop-color="#705E01"/>
+</linearGradient>
+<linearGradient id="paint8_linear_1_57" x1="712.87" y1="0" x2="712.87" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF383C"/>
+<stop offset="1" stop-color="#670204"/>
+</linearGradient>
+<linearGradient id="paint9_linear_1_57" x1="666.879" y1="0" x2="666.879" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDE2C"/>
+<stop offset="1" stop-color="#705E01"/>
+</linearGradient>
+<linearGradient id="paint10_linear_1_57" x1="620.248" y1="0" x2="620.248" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFDE2C"/>
+<stop offset="1" stop-color="#705E01"/>
+</linearGradient>
+<linearGradient id="paint11_linear_1_57" x1="760.139" y1="0" x2="760.139" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF383C"/>
+<stop offset="1" stop-color="#670204"/>
+</linearGradient>
+<linearGradient id="paint12_linear_1_57" x1="899.392" y1="0" x2="899.392" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF383C"/>
+<stop offset="1" stop-color="#670204"/>
+</linearGradient>
+<linearGradient id="paint13_linear_1_57" x1="853.4" y1="0" x2="853.4" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF383C"/>
+<stop offset="1" stop-color="#670204"/>
+</linearGradient>
+<linearGradient id="paint14_linear_1_57" x1="806.77" y1="0" x2="806.77" y2="26" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF383C"/>
+<stop offset="1" stop-color="#670204"/>
+</linearGradient>
+</defs>
+</svg>
